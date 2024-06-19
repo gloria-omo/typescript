@@ -1,5 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
-import sequelize from '../config/config';
+import sequelize from '../configuration/config';
 
 class User extends Model {
   public id!: number;
@@ -17,23 +17,37 @@ User.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    name: {
-      type: new DataTypes.STRING(128),
+    firstName: {
+      type: DataTypes.STRING(128),
+      allowNull: false,
+    },
+    lastName: {
+      type: DataTypes.STRING(128),
       allowNull: false,
     },
     email: {
-      type: new DataTypes.STRING(128),
+      type: DataTypes.STRING(128),
       allowNull: false,
       unique: true,
     },
     password: {
-      type: new DataTypes.STRING(128),
+      type: DataTypes.STRING(128),
       allowNull: false,
     },
+    comfirmPassword: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    phoneNumber: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
+    }
   },
   {
+    timestamps: true,
     tableName: 'users',
-    sequelize, // passing the sequelize instance is required
+    sequelize,
   }
 );
 
