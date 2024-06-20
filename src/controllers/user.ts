@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import User from '../models/user';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export const register = async (req: Request, res: Response) => {
     try {
@@ -38,5 +41,80 @@ export const register = async (req: Request, res: Response) => {
             message: "Internal server error",
             data: error.message
         })
+    }
+}
+
+export const login =async(req:Request,res:Response)=>{
+    try {
+        const{email,password} = req.body;
+        if (!email) {
+            return res.status(400).json({
+                message: 'Please enter Email address'
+            })
+        }
+
+        // Find user based on email or Phone Number
+        const user = await User.findOne({ where: {email}});
+
+        // Check if the user exists
+        if (!user) {
+            return res.status(404).json({
+                message: 'User not found'
+            });
+        }
+
+        // Compare user's password with the saved password.
+        const checkPassword = bcrypt.compareSync(password, user.password)
+        // Check for password error
+        if (!checkPassword) {
+            return res.status(400).json({
+                message: 'Invalid password'
+            })
+        }
+        const token = jwt.sign({
+            userId: user.id,
+            email: user.email
+        },
+           " process.env.JWT_SECRET", { expiresIn: "1 day" })
+
+        // Save the user data to the database
+        user.save()
+        // Send a success response
+        res.status(200).json({
+            message: 'Login successful',
+            user,
+            token
+        })
+
+        
+    } catch (error) {
+        res.status(500).json({
+            message:"unable to sign up",
+            data:error.message
+        })
+
+        
+    }
+}
+
+export const getAll = async(req:Request , res:Response)=>{
+    try {
+        const user = User.findAll;
+        if(user.length === 0)
+        return res.status(400).json({
+             message:"no user found"
+        })
+        
+           res.status(200).json({
+            message: "here are all your users",
+            data: user
+           })
+
+    } catch (error) {
+        res.status(500).json({
+            message:"unable to get all",
+            data: error.message
+        })
+        
     }
 }
