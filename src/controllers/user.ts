@@ -99,7 +99,7 @@ export const login =async(req:Request,res:Response)=>{
 
 export const getAll = async(req:Request , res:Response)=>{
     try {
-        const user = User.findAll;
+        const user = await User.findAll();
         if(user.length === 0)
         return res.status(400).json({
              message:"no user found"
@@ -114,6 +114,42 @@ export const getAll = async(req:Request , res:Response)=>{
         res.status(500).json({
             message:"unable to get all",
             data: error.message
+        })
+        
+    }
+};
+
+export const getOne = async (req:Request , res:Response)=>{
+    try {
+        const {email} =req.body
+        const user = await User.findOne({where:{email}});
+        res.status(200).json({
+            message: "the user",
+            data: user
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            message:"unable to get one user",
+            data:error.message
+        })
+        
+    }
+}
+
+export const getById = async (req:Request , res:Response)=>{
+    try {
+        const {id} = req.params
+        const user = await User.findByPk(id);
+        res.status(200).json({
+            message: "the user",
+            data: user
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            message:"unable to get one user",
+            data:error.message
         })
         
     }
