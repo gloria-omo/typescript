@@ -75,7 +75,7 @@ export const login =async(req:Request,res:Response)=>{
             userId: user.id,
             email: user.email
         },
-           " process.env.JWT_SECRET", { expiresIn: "1 day" })
+           "process.env.JWT_SECRET", { expiresIn: "1 day" })
 
         // Save the user data to the database
         user.save()
