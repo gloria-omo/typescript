@@ -62,7 +62,7 @@ export const login =async(req:Request,res:Response)=>{
                 message: 'User not found'
             });
         }
-
+console.log(process.env.JWT_SECRET)
         // Compare user's password with the saved password.
         const checkPassword = bcrypt.compareSync(password, user.password)
         // Check for password error
@@ -75,7 +75,7 @@ export const login =async(req:Request,res:Response)=>{
             userId: user.id,
             email: user.email
         },
-           "process.env.JWT_SECRET", { expiresIn: "1 day" })
+           process.env.JWT_SECRET, { expiresIn: "1 day" })
 
         // Save the user data to the database
         user.save()
