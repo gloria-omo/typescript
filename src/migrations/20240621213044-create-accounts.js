@@ -23,7 +23,8 @@ module.exports = {
         unique: true
       },
       balance: {
-        type: Sequelize.INTEGER
+        type: Sequelize.DECIMAL(15, 2), 
+        allowNull: false
       },
       accountType: {
         type: Sequelize.ENUM('savings', 'current', 'fixedDeposit'),

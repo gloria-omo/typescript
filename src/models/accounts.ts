@@ -5,6 +5,7 @@ class Account extends Model {
   public id!: number;
   public user_id!: number;
   public accountNumber!: number;
+  public balance!: number;
   public accountType!: 'savings' | 'current' | 'fixedDeposit';
   public status!: 'active' | 'inactive';
   public readonly createdAt!: Date;
@@ -31,6 +32,10 @@ Account.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       unique: true,
+    },
+    balance: {
+      type: DataTypes.DECIMAL(15, 2), 
+      allowNull: false
     },
     accountType: {
       type: DataTypes.ENUM('savings', 'current', 'fixedDeposit'),
