@@ -76,6 +76,7 @@ console.log(process.env.JWT_SECRET)
             email: user.email
         },
            process.env.JWT_SECRET, { expiresIn: "1 day" })
+           
 
         // Save the user data to the database
         user.save()
@@ -154,3 +155,58 @@ export const getById = async (req:Request , res:Response)=>{
         
     }
 }
+
+export const logout = async (req:Request, res:Response) => {
+    try {
+        const authorizationHeader = req.headers.authorization;
+// i commented the log out intentionally
+
+        if (!authorizationHeader) {
+            return res.status(400).json({ error: 'Authorization token not found' });
+        }
+
+        const token = authorizationHeader.split(' ')[1];
+//         if (!authorizationHeader) {
+//             return res.status(400).json({ error: 'Authorization token not found' });
+//         }
+
+        if (!token) {
+            return res.status(400).json({ error: 'Authorization token not found' });
+        }
+//         const token = authorizationHeader.split(' ')[1];
+
+        // Verify and decode the token to get user ID
+        const decodedToken: any = jwt.verify(token, process.env.jwtSecret);
+
+        if (!decodedToken) {
+            return res.status(400).json({ error: 'Invalid token' });
+        }
+//         const decodedToken: any = jwt.verify(token, process.env.jwtSecret);
+
+        // Find user by decoded user ID
+        const user = await User.findByPk(decodedToken.userId);
+//         if (!decodedToken) {
+//             return res.status(400).json({ error: 'Invalid token' });
+//         }
+
+        if (!user) {
+            return res.status(400).json({ error: 'User not found' });
+        }
+//         // Find user by decoded user ID
+//         const user = await User.findByPk(decodedToken.userId);
+
+        // Invalidate token by setting it to null
+        user.token = null;
+        await user.save();
+//         if (!user) {
+//             return res.status(400).json({ error: 'User not found' });
+//         }
+
+        // Send success response
+        res.status(200).json({ message: 'Logout successful' });
+    } catch (error) {
+        // Handle errors
+        console.error(error.message);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
